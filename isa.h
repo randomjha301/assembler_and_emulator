@@ -5,11 +5,11 @@
 enum opcode_status {NO_OPERAND,VALUE_OPERAND,OFFSET_OPERAND};
 
 struct Instruction{
-    char* name;
+    const char* name;
     int opcode;
     enum opcode_status status;
 };
 
-struct Instruction SearchByName(char* );
+struct Instruction SearchByName(const char* );
 
 #endif

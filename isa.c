@@ -5,10 +5,10 @@ static const struct Instruction Instructions[] = {
     {"data",-1,VALUE_OPERAND},  
     {"ldc",0,VALUE_OPERAND},
     {"adc",1,VALUE_OPERAND},
-    {"ldl",2,OFFSET_OPERAND},
-    {"stl",3,OFFSET_OPERAND},
-    {"ldnl",4,OFFSET_OPERAND},
-    {"stnl",5,OFFSET_OPERAND},
+    {"ldl",2,VALUE_OPERAND},
+    {"stl",3,VALUE_OPERAND},
+    {"ldnl",4,VALUE_OPERAND},
+    {"stnl",5,VALUE_OPERAND},
     {"add",6,NO_OPERAND},
     {"sub",7,NO_OPERAND},
     {"shl",8,NO_OPERAND},
@@ -27,7 +27,7 @@ static const struct Instruction Instructions[] = {
     {"SET",-2,VALUE_OPERAND}  
 };
 
-struct Instruction SearchByName(char* name){
+struct Instruction SearchByName(const char* name){
     int arraySize=sizeof(Instructions)/sizeof(Instructions[0]);
     for(int i=0;i<arraySize;i++){
         if(strcmp(Instructions[i].name,name)==0) return Instructions[i];
