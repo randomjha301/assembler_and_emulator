@@ -19,7 +19,7 @@ void check_parse(FILE* fp){
         perror("Couldn't open file");return;
     }
     struct LineInfo* array;
-    bool error=parse(fp,&array);
+    parse(fp,&array);
     if(array==NULL) {printf("%s","no data in file");return;}
     
 

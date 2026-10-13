@@ -1,3 +1,6 @@
 *.o
 *.txt
 *.exe
+*.asm
+*.log
+*.lst
