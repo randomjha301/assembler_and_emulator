@@ -50,7 +50,7 @@ int findLineByName(char* name){
 }
 
 int findPcByName(char* name){
-    if(symbolTable==NULL) return -3;
+    if(symbolTable==NULL) return -10;
     int i=0;
     while(symbolTable[i].used!=-1){
         if (strcmp(symbolTable[i].label,name)==0) {symbolTable[i].used=1;return symbolTable[i].pc;break;}
@@ -58,6 +58,8 @@ int findPcByName(char* name){
     }
     return -10;
 }
+
+
 
 char* pcToName(int pc){
     if(symbolTable==NULL) return NULL;
@@ -69,14 +71,16 @@ char* pcToName(int pc){
     return NULL;
 }
 
-void symtab_warn_unused(void)
+void symtab_warn_unused(FILE* log_file)
 {
     int i=0;
+    if(symbolTable==NULL) return;
     while(symbolTable[i].used!=-1){
 
         if (!symbolTable[i].used)
-            fprintf(stderr, "line %d : warning: label '%s' is never used\n",
+            fprintf(log_file, "line %d : warning: label '%s' is never used\n",
                     symbolTable[i].lineNo, symbolTable[i].label);
+        i++;
     }
 }
 

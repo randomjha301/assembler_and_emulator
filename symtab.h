@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <stdio.h>
 #ifndef SYMTAB_H
 #define SYMTAB_H
 
@@ -11,12 +12,12 @@ struct symbol{
 };
 
 
-void init();
+void init(void);
 bool add(int , char* ,bool ,int ,int* ,int* ,int);
 int findLineByName(char*);
 int findPcByName(char*);
 char* pcToName(int);
-void symtab_warn_unused(void);
+void symtab_warn_unused(FILE*);
 
 
 #endif
