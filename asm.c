@@ -170,11 +170,37 @@ void write_file(const char *bin_filename,const char *lst_filename,struct LineInf
     fclose(lst_file);
 }
 
-int main(){
-    FILE* fp=fopen("input.asm","r");
-    FILE* log_file=fopen("result.log","w");
-    const char* bin_file="output.o";
-    const char* lst_file="output.lst";
+int main(int argc,char* argv[]){
+    char* input_file=argv[1];
+    if (argc < 2) {
+        printf("Error: Missing file name.\n");
+        printf("Usage: %s <filename>\n", argv[0]);
+        return 1; 
+    }
+
+    //creating log_file name
+    char* log=(char*)(malloc(strlen(input_file)+1));
+    strcpy(log,input_file);
+    memcpy(log + strlen(input_file)-3, "log", strlen("log"));
+    
+
+    //creating binary file name 
+    char *binary = malloc(strlen(input_file) - 2);
+    if (binary != NULL) {
+        strncpy(binary, input_file, strlen(input_file) - 3);
+        binary[strlen(input_file) - 3] = '\0';
+        strcat(binary, "o");
+    }
+
+    //creating listing file name
+    char* lst=(char*)(malloc(strlen(input_file)+1));
+    strcpy(lst,input_file);
+    memcpy(lst + strlen(input_file)-3, "lst", strlen("lst"));
+
+    FILE* fp=fopen(input_file,"r");
+    FILE* log_file=fopen(log,"w");
+    const char* bin_file=binary;
+    const char* lst_file=lst;
 
     if(log_file==NULL){perror("Couldn't open result.log");if(fp!=NULL) fclose(fp);return 1;}
     if(fp==NULL){fprintf(log_file,"Couldn't open file");return 0;}

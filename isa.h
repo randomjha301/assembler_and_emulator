@@ -1,3 +1,10 @@
+/*
+  Author: Adarsh Jha
+  Roll No: 2501AI03
+  Declaration of Authorship:
+  I hereby declare that this code is written by me.
+ */
+
 #ifndef ISA_H
 #define ISA_H
 

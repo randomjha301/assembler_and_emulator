@@ -1,3 +1,9 @@
+/*
+  Author: Adarsh Jha
+  Roll No: 2501AI03
+  Declaration of Authorship:
+  I hereby declare that this code is written by me.
+ */
 #include<stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,7 +15,7 @@
 #define MAX_TOKEN_SIZE 32
 
 static bool label_check(char* label,int line_count,struct LineInfo* array){
-    char* allowed="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+    const char* allowed="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
     if(strlen(label)==0){snprintf(array[line_count].error_message, sizeof(array[line_count].error_message), "line %d : ':' needs to be accompanied with a label name",array[line_count].lineNo);return false;}
     if(!isalpha((unsigned char)label[0])) {snprintf(array[line_count].error_message, sizeof(array[line_count].error_message),"line %d : label name must start with a letter",array[line_count].lineNo);return false;}
     if(strspn(label, allowed) != strlen(label)) {snprintf(array[line_count].error_message, sizeof(array[line_count].error_message),"line %d : characters other than alphabet or numbers are not permitted in label name",array[line_count].lineNo);return false;}
@@ -41,7 +47,7 @@ static  bool operand_check(char* operand,int line_count,struct LineInfo* array){
         return true;
     }
     else{
-        char* allowed="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        const char* allowed="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         if(strspn(operand, allowed) == strlen(operand)){
             array[line_count].has_numeric_operand=false;
             if(strlen(operand)>MAX_TOKEN_SIZE-1){
