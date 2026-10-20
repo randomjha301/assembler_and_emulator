@@ -1,7 +1,6 @@
 *.o
 *.txt
-*.exe
-*.asm
+*.exe 
 *.log
 *.lst
 emu
