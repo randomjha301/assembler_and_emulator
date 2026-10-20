@@ -6,7 +6,10 @@
  */
 #include "isa.h"
 #include <string.h>
+#include <ctype.h>
 
+
+//this is the instruction struct which stores information of all the mnemonic
 static const struct Instruction Instructions[] = {
     {"data",-1,VALUE_OPERAND},  
     {"ldc",0,VALUE_OPERAND},
@@ -33,10 +36,14 @@ static const struct Instruction Instructions[] = {
     {"SET",-2,VALUE_OPERAND}  
 };
 
+
+//returns a struct Instruction taking the name of mnemonic as input
 struct Instruction SearchByName(const char* name){
     int arraySize=sizeof(Instructions)/sizeof(Instructions[0]);
     for(int i=0;i<arraySize;i++){
-        if(strcmp(Instructions[i].name,name)==0) return Instructions[i];
+        const char* a=Instructions[i].name; const char* b=name;
+        while(*a && tolower((unsigned char)*a)==tolower((unsigned char)*b)){a++;b++;}
+        if(*a=='\0' && *b=='\0') return Instructions[i];
     }
 
     struct Instruction no_instruction={"no_such_instruction",-3,OFFSET_OPERAND};

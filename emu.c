@@ -8,22 +8,27 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#define MAX_STEPS 1000000   //maximum instructions executed before we assume an infinite loop
 
+//created an array to help in writing executinf statements
 const char *mnemonics[] = {
     "ldc", "adc", "ldl", "stl", "ldnl", "stnl", "add", "sub", 
     "shl", "shr", "adj", "a2sp", "sp2a", "call", "return", 
     "brz", "brlz", "br", "HALT", "mul", "div"
 };
 
-
+//memory array
 int memory[65536]={0};
+//Register A and B and stack pointer register
 int A=0,B=0,sp=0;
 
 int main(int argc,char* argv[]){
     int PC=0;
     bool is_running = true;
-    
+    long steps=0;
+
     char* input_file=argv[1];
+    //handling wrong command in terminal case
     if (argc < 2) {
         printf("Error: Missing file name.\n");
         printf("Usage: %s <filename>\n", argv[0]);
@@ -51,11 +56,17 @@ int main(int argc,char* argv[]){
     }
     fread(memory, sizeof(int), 65536, bin_file);
     fclose(bin_file);
+
+    //executing the instructions
     while (is_running) {
+        if(++steps>MAX_STEPS){fprintf(log_file,"Emulator Error: more than %d steps executed, possible infinite loop\n",MAX_STEPS);break;}
+        //if pc exceeds the limits ,raise error
         if (PC < 0 || PC >= 65536) {
             fprintf(log_file, "Emulator Error: PC out of bounds (%d)\n", PC);
             break;
         }
+
+        //decoding the operand and operand from the instruction
         int instruction = memory[PC];
         int opcode = instruction & 0xFF;
         int operand = instruction >> 8;
@@ -63,14 +74,17 @@ int main(int argc,char* argv[]){
             operand |= 0xFF000000;
         }
         PC++;
-        
+        //'br' with offset -1 jumps to itself forever, stop immediately
+        if(opcode==17 && operand==-1){fprintf(log_file,"Emulator Error: infinite loop detected ('br' jumps to itself) at PC = %d\n",PC-1);break;}
+
+        //writing the executing statements accordingly 
         if (opcode >= 0 && opcode <= 20) {
             if ((opcode >= 6 && opcode <= 9) || (opcode == 11) || (opcode == 12) || opcode == 14 || (opcode >= 18 && opcode <= 20)) { fprintf(log_file,"PC: %08X | A: %08X | B: %08X | SP: %08X | Executing: %s\n", PC, A, B, sp, mnemonics[opcode]);} 
             else {fprintf(log_file,"PC: %08X | A: %08X | B: %08X | SP: %08X | Executing: %s %d\n",PC, A, B, sp, mnemonics[opcode], operand);}
         } 
         else fprintf(log_file,"PC: %08X | A: %08X | B: %08X | SP: %08X | Executing: DATA (0x%08X)\n", PC, A, B, sp, instruction);
         
-        
+        //handling all the differnet operations
         switch (opcode) {
             case 0:  /* ldc: Load Constant */
                 B = A;
@@ -82,26 +96,26 @@ int main(int argc,char* argv[]){
                 break;
                 
             case 2:  /* ldl: Load Local */
-                if(sp+operand>=65536 && sp+operand<0 ) {fprintf(log_file, "(Segmentation fault)Memory access out of bounds\n");is_running=false;break;}
+                if(sp+operand>=65536 ||  sp+operand<0 ) {fprintf(log_file, "(Segmentation fault)Memory access out of bounds\n");is_running=false;break;}
                 B = A;
                 A = memory[sp + operand];
                 break;
                 
             case 3:  /* stl: Store Local */
-                if(sp+operand>=65536 && sp+operand<0) {fprintf(log_file, "(Segmentation fault)Memory access out of bounds\n");is_running=false;break;}
+                if(sp+operand>=65536 || sp+operand<0) {fprintf(log_file, "(Segmentation fault)Memory access out of bounds\n");is_running=false;break;}
               
                 memory[sp + operand] = A;
                 A = B;
                 break;
                 
             case 4:  /* ldnl: Load Non-Local */
-                if(A+operand>=65536 && A+operand<0) {fprintf(log_file, "(Segmentation fault)Memory access out of bounds\n");is_running=false;break;}
+                if(A+operand>=65536 || A+operand<0) {fprintf(log_file, "(Segmentation fault)Memory access out of bounds\n");is_running=false;break;}
                 
                 A = memory[A + operand];
                 break;
                 
             case 5:  /* stnl: Store Non-Local */
-                if(A+operand>=65536 && A+operand<0) {fprintf(log_file, "(Segmentation fault)Memory access out of bounds\n");is_running=false;break;}
+                if(A+operand>=65536 || A+operand<0) {fprintf(log_file, "(Segmentation fault)Memory access out of bounds\n");is_running=false;break;}
                 memory[A + operand] = B;
                 break;
                 
@@ -182,6 +196,7 @@ int main(int argc,char* argv[]){
         }
     }
 
+    //writing final memory dump and register states
     fprintf(log_file,"\n--Final Register state--\nPC: %0X\nSP: %0X\nA: %0X\nB: %0X\n",PC,sp,A,B);
     fprintf(log_file,"\nFinal Memory Dump (Non-zero addresses):\n");
     for (int i = 0; i < 65536; i++) {
