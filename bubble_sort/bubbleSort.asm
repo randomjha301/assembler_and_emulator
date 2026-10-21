@@ -4,7 +4,7 @@ ldc size    ;outer loop counter
 ldnl 0      ;A=5
 adc -1      ;A=4
 
-ldc i  ;A=address of i
+ldc i  ;A=address of i,B=4
 stnl 0 ;memory[i]=4
 
 bubbleSort:

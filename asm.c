@@ -158,8 +158,8 @@ void pass2(struct LineInfo* array){
                         //label present ,offset operand case
                         if(result.status==OFFSET_OPERAND) operand_value=target-(array[i].address+1);
                         else operand_value=target;
-                        snprintf(array[i].lst_text,sizeof(array[i].lst_text),
-                        "%08X %s:\n%08X %08X %s %s",array[i].address,array[i].label,array[i].address,array[i].machine_code,array[i].mnemonic,array[i].operand);
+                        // snprintf(array[i].lst_text,sizeof(array[i].lst_text),
+                        // "%08X %s:\n%08X %08X %s %s",array[i].address,array[i].label,array[i].address,array[i].machine_code,array[i].mnemonic,array[i].operand);
                     }
                     
                 }
